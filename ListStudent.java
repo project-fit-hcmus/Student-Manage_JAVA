@@ -1,26 +1,7 @@
-
-// import java.io.BufferedInputStream;
-// import java.io.DataInputStream;
-// import java.io.InputStream;
-// import java.io.InputStreamReader;
-// import java.io.OutputStreamWriter;
-// import java.io.RandomAccessFile;
-// import java.io.File;
-// import javax.swing.SpringLayout;
-// import javax.swing.GroupLayout.Alignment;
-// import javax.swing.border.Border;
-// import javax.swing.border.EmptyBorder;
-// import javax.swing.table.DefaultTableModel;
-// import javax.swing.JScrollBar;
-// import javax.swing.JList;
-// import java.awt.FlowLayout;
-// import java.awt.GridLayout;
-// import java.awt.TextArea;
-// import java.awt.Container;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.File;
 
 import java.util.*;
 import java.io.FileReader;
@@ -52,7 +33,7 @@ class student {
     public student() {
         id = "001";
         name = address = note = mark = "aaa";
-        avatar = System.getProperty("user.dir") + "\\media\\default-user.png";
+        avatar = "default-user.png";
     }
 
     public student(String ms, String ten, String ava, String diachi, String ghichu, String diem) {
@@ -201,14 +182,6 @@ public class ListStudent extends JFrame {
         }
     }
 
-    public boolean idIsExist(String id) {
-        for (int i = 0; i < list.size(); ++i) {
-            if (list.get(i).getId().equals(id))
-                return true;
-        }
-        return false;
-    }
-
     public String ReadFromFile(String dir) {
         BufferedReader br;
         String root = System.getProperty("user.dir");
@@ -219,7 +192,6 @@ public class ListStudent extends JFrame {
             while (line != null) {
                 String id = line;
                 String name = br.readLine();
-                // String avatar = root + "\\media\\" + br.readLine();
                 String avatar = br.readLine();
                 String addr = br.readLine();
                 String note = br.readLine();
@@ -248,8 +220,6 @@ public class ListStudent extends JFrame {
                 list = null;
             }
         });
-
-        String dir = System.getProperty("user.dir");
 
         // Object
         JButton btnAdd = new JButton("Add Student");
@@ -318,7 +288,7 @@ public class ListStudent extends JFrame {
         sidebar.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         sidebar.add(Box.createRigidArea(new Dimension(0, 20))); // tạo khoảng cách cho đối tượng trên cùng
         sidebar.add(btnAdd);
-        sidebar.add(Box.createVerticalStrut(20)); // tạo khoảng cách giữa các đối tượng(cố định?)
+        sidebar.add(Box.createVerticalStrut(20)); // tạo khoảng cách giữa các đối tượng
         sidebar.add(btnView);
         sidebar.add(Box.createVerticalStrut(20));
         sidebar.add(btnUpdate);
@@ -446,7 +416,6 @@ public class ListStudent extends JFrame {
         pack();
     }
 
-    // done
     class addStudentScreen extends JPanel {
         public String avataPath;
 
@@ -494,7 +463,6 @@ public class ListStudent extends JFrame {
             constraint.gridy = 0;
             constraint.fill = GridBagConstraints.BOTH;
             constraint.insets = new Insets(5, 0, 0, 5);
-
             temp.add(labId, constraint);
             constraint.gridy = 1;
             temp.add(labName, constraint);
@@ -541,8 +509,7 @@ public class ListStudent extends JFrame {
                     fieldName.setText("");
                     student a = new student(id, name, avatar, addr, note, mark);
                     AddStudent(a);
-                    JOptionPane.showMessageDialog(addStudentScreen.this,
-                            "Add Success!!!");
+                    JOptionPane.showMessageDialog(addStudentScreen.this, "Add Success!!!");
                 }
             });
             btnCancel.addActionListener(new ActionListener() {
@@ -571,8 +538,6 @@ public class ListStudent extends JFrame {
 
         }
     }
-
-    // done
 
     class MyTableModel extends AbstractTableModel {
         private String[] columnNames = { "Avatar", "ID", "Name", "Address", "Mark", "Note" };
@@ -620,7 +585,6 @@ public class ListStudent extends JFrame {
         }
     }
 
-    // xử lý hình ảnh avatar
     class viewStudentScreen extends JPanel {
         JTable jTable;
         MyTableModel myTableModel;
@@ -629,7 +593,6 @@ public class ListStudent extends JFrame {
         public viewStudentScreen() {
             data = new Object[list.size()][6];
             for (int i = 0; i < list.size(); ++i) {
-                // data[i][0] = new ImageIcon(getClass().get)
                 if (list.get(i).getAvatar().lastIndexOf("\\") == -1)
                     data[i][0] = new ImageIcon(getClass().getResource("/media/" + list.get(i).getAvatar()));
                 else
@@ -661,8 +624,7 @@ public class ListStudent extends JFrame {
                         label.setIcon((ImageIcon) value);
                         return label;
                     }
-                    return super.getTableCellRendererComponent(table, value, isSelected,
-                            hasFocus, row, column);
+                    return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 }
             });
             JScrollPane pane = new JScrollPane(jTable);
@@ -672,7 +634,6 @@ public class ListStudent extends JFrame {
         public void updateInView() {
             Object[][] data = new Object[list.size()][6];
             for (int i = 0; i < list.size(); ++i) {
-                // data[i][0] = new ImageIcon(list.get(i).getAvatar());
                 if (list.get(i).getAvatar().lastIndexOf("\\") == -1)
                     data[i][0] = new ImageIcon(getClass().getResource("/media/" + list.get(i).getAvatar()));
                 else
@@ -689,7 +650,6 @@ public class ListStudent extends JFrame {
         }
     }
 
-    // done
     class UpdateStudentScreen extends JPanel {
 
         public UpdateStudentScreen() {
@@ -751,9 +711,8 @@ public class ListStudent extends JFrame {
             temp.add(textVal, constraint);
             constraint.gridy = 3;
             temp.add(btnOk, constraint);
-
-            btnOk.addMouseListener(new MouseListener() {
-                public void mouseClicked(MouseEvent e) {
+            btnOk.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     String id = textid.getText();
                     String value = textVal.getText();
                     String criteria = combo.getSelectedItem().toString();
@@ -761,65 +720,34 @@ public class ListStudent extends JFrame {
                     textVal.setText("");
                     textid.setText("");
                     combo.setSelectedItem(1);
-                    JOptionPane.showMessageDialog(UpdateStudentScreen.this,
-                            result);
-
-                }
-
-                public void mousePressed(MouseEvent e) {
-                }
-
-                public void mouseReleased(MouseEvent e) {
-                }
-
-                public void mouseEntered(MouseEvent e) {
-                }
-
-                public void mouseExited(MouseEvent e) {
+                    JOptionPane.showMessageDialog(UpdateStudentScreen.this, result);
                 }
             });
-            btnCancel.addMouseListener(new MouseListener() {
-                public void mouseClicked(MouseEvent e) {
+            btnCancel.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     textVal.setText("");
                     textid.setText("");
                     combo.setSelectedItem(1);
                     JOptionPane.showMessageDialog(UpdateStudentScreen.this,
                             "Cancel Update Action!!!");
-
-                }
-
-                public void mousePressed(MouseEvent e) {
-                }
-
-                public void mouseReleased(MouseEvent e) {
-                }
-
-                public void mouseEntered(MouseEvent e) {
-                }
-
-                public void mouseExited(MouseEvent e) {
                 }
             });
+
             add(temp);
         }
 
     }
 
-    // done
     class ImportStudentScreen extends JPanel {
         public ImportStudentScreen() {
-
         }
 
         public void updateInImport(String pathfile) {
             String result = ReadFromFile(pathfile);
-            JOptionPane.showMessageDialog(ImportStudentScreen.this,
-                    result);
-
+            JOptionPane.showMessageDialog(ImportStudentScreen.this, result);
         }
     }
 
-    // done
     class ExportStudentScreen extends JPanel {
         public ExportStudentScreen() {
         }
@@ -828,11 +756,12 @@ public class ListStudent extends JFrame {
             String dir = System.getProperty("user.dir");
             // tạo file export.csv tại thư mục hiện hành
             try {
-                FileWriter file = new FileWriter("export.csv");
-                WriteToFile(dir + "export.csv");
-                file.close();
+                File file = new File("export.csv");
+                // thực hiện ghi dữ liệu export vào file vừa tạo
+                WriteToFile(dir + "\\export.csv");
+                System.out.println(dir + "\\export.csv");
             } catch (Exception e) {
-
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -841,7 +770,6 @@ public class ListStudent extends JFrame {
         JLabel labChoose;
         JButton btnOK, btnCancel, choose;
         DefaultComboBoxModel<String> options;
-        // String options[];
         JComboBox combo;
 
         public DeleteStudentScreen() {
@@ -879,7 +807,6 @@ public class ListStudent extends JFrame {
             constraint.gridx = 0;
             constraint.gridy = 0;
             constraint.fill = GridBagConstraints.BOTH;
-            // constraint.insets = new Insets(20, 0, 0, 0);
             temp.add(labChoose, constraint);
             constraint.insets = new Insets(10, 0, 0, 10);
             constraint.gridy = 1;
@@ -892,47 +819,21 @@ public class ListStudent extends JFrame {
             temp.add(btnOK, constraint);
 
             // xử lý sự kiện thao tác xóa/hủy
-            btnOK.addMouseListener(new MouseListener() {
-                public void mouseClicked(MouseEvent e) {
+            btnOK.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     String id = combo.getSelectedItem().toString();
                     DeleteStudent(id);
                     combo.removeItem(id);
                     combo.setSelectedItem(null);
                     JOptionPane.showMessageDialog(DeleteStudentScreen.this,
                             "Delete success!!!");
-
-                }
-
-                public void mousePressed(MouseEvent e) {
-                }
-
-                public void mouseReleased(MouseEvent e) {
-                }
-
-                public void mouseEntered(MouseEvent e) {
-                }
-
-                public void mouseExited(MouseEvent e) {
                 }
             });
-            btnCancel.addMouseListener(new MouseListener() {
-                public void mouseClicked(MouseEvent e) {
+            btnCancel.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     combo.setSelectedItem(null);
                     JOptionPane.showMessageDialog(DeleteStudentScreen.this,
                             "Cancel Delete Action!!!");
-
-                }
-
-                public void mousePressed(MouseEvent e) {
-                }
-
-                public void mouseReleased(MouseEvent e) {
-                }
-
-                public void mouseEntered(MouseEvent e) {
-                }
-
-                public void mouseExited(MouseEvent e) {
                 }
             });
             add(temp);
