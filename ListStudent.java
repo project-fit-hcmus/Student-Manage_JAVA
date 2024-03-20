@@ -1,15 +1,21 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.File;
-
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.*;
 import java.io.FileReader;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.xml.transform.Templates;
 import javax.swing.*;
 
+import java.awt.Image;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,7 +28,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.*;
 
-class student {
+class student implements Serializable {
     private String id;
     private String name;
     private String mark;
@@ -208,6 +214,21 @@ public class ListStudent extends JFrame {
         }
     }
 
+    public void UpdateToBinaryFile() {
+        try {
+            ObjectOutputStream obj = new ObjectOutputStream(new FileOutputStream("data.dat"));
+            obj.writeInt(list.size());
+            // obj.writeChar('\n');
+            for (int i = 0; i < list.size(); ++i) {
+                obj.writeObject(list.get(i));
+                // obj.writeChar('\n');
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public ListStudent() {
         setTitle("Manager Student");
         list = new ArrayList<>();
@@ -224,33 +245,33 @@ public class ListStudent extends JFrame {
         // Object
         JButton btnAdd = new JButton("Add Student");
         btnAdd.setFont(new Font("Arial", Font.BOLD, 25));
-        btnAdd.setBackground(Color.WHITE);
         btnAdd.setFocusable(false);
+        btnAdd.setBackground(new Color(240, 245, 249));
         JButton btnView = new JButton("View List Student");
         btnView.setFont(new Font("Arial", Font.BOLD, 25));
-        btnView.setBackground(Color.WHITE);
         btnView.setFocusable(false);
+        btnView.setBackground(new Color(240, 245, 249));
         JButton btnImport = new JButton("Import");
         btnImport.setFont(new Font("Arial", Font.BOLD, 25));
-        btnImport.setBackground(Color.WHITE);
         btnImport.setFocusable(false);
+        btnImport.setBackground(new Color(240, 245, 249));
         JButton btnExport = new JButton("Export");
         btnExport.setFont(new Font("Arial", Font.BOLD, 25));
-        btnExport.setBackground(Color.WHITE);
         btnExport.setFocusable(false);
+        btnExport.setBackground(new Color(240, 245, 249));
         JButton btnUpdate = new JButton("Update");
         btnUpdate.setFont(new Font("Arial", Font.BOLD, 25));
-        btnUpdate.setBackground(Color.WHITE);
         btnUpdate.setFocusable(false);
+        btnUpdate.setBackground(new Color(240, 245, 249));
         JButton btnDelete = new JButton("Delete");
         btnDelete.setFont(new Font("Arial", Font.BOLD, 25));
-        btnDelete.setBackground(Color.WHITE);
         btnDelete.setFocusable(false);
+        btnDelete.setBackground(new Color(240, 245, 249));
         JLabel header = new JLabel("Add Student Function");
 
         // style
         Dimension btnSize = new Dimension(300, 50);
-        Dimension sidebarSize = new Dimension(340, 700);
+        Dimension sidebarSize = new Dimension(340, 900);
         Dimension DialogBoxSize = new Dimension(600, 300);
         Dimension fullScreen = new Dimension(1000, 1000);
         btnAdd.setPreferredSize(btnSize);
@@ -273,6 +294,7 @@ public class ListStudent extends JFrame {
         btnDelete.setMaximumSize(btnSize);
         header.setFont(new Font("Arial", Font.PLAIN, 25));
         header.setAlignmentX(CENTER_ALIGNMENT);
+        header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         JPanel mainPanel = new JPanel();
         BoxLayout box = new BoxLayout(mainPanel, BoxLayout.X_AXIS);
@@ -282,10 +304,11 @@ public class ListStudent extends JFrame {
         sidebar.setPreferredSize(sidebarSize);
         sidebar.setMaximumSize(sidebarSize);
         sidebar.setMinimumSize(sidebarSize);
-        sidebar.setBackground(new Color(32, 178, 170));
+        sidebar.setBackground(new Color(82, 97, 107));
 
         sidebar.setLayout(boxSidebar);
         sidebar.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
         sidebar.add(Box.createRigidArea(new Dimension(0, 20))); // tạo khoảng cách cho đối tượng trên cùng
         sidebar.add(btnAdd);
         sidebar.add(Box.createVerticalStrut(20)); // tạo khoảng cách giữa các đối tượng
@@ -305,13 +328,11 @@ public class ListStudent extends JFrame {
         JPanel overal = new JPanel();
         BoxLayout boxoveral = new BoxLayout(overal, BoxLayout.Y_AXIS);
         overal.setLayout(boxoveral);
-        overal.setBackground(new Color(150, 205, 205));
-
+        overal.setBackground(new Color(210, 214, 223));
         JPanel content = new JPanel();
 
         CardLayout card = new CardLayout();
         content.setLayout(card);
-        content.setBackground(Color.BLACK);
 
         // màn hình thêm 1 học sinh
         addStudentScreen addScreen = new addStudentScreen();
@@ -319,32 +340,32 @@ public class ListStudent extends JFrame {
         addScreen.setMinimumSize(DialogBoxSize);
         addScreen.setMaximumSize(DialogBoxSize);
         addScreen.setVisible(true);
-        addScreen.setBackground(new Color(150, 205, 205));
+        addScreen.setBackground(new Color(210, 214, 223));
         content.add("addscreen", addScreen);
 
         // màn hình update thông tin học sinh
         UpdateStudentScreen updateScreen = new UpdateStudentScreen();
         updateScreen.setVisible(true);
-        updateScreen.setBackground(new Color(150, 205, 205));
+        updateScreen.setBackground(new Color(210, 214, 223));
         content.add("updatescreen", updateScreen);
         // màn hình hiển thị toàn bộ danh sách học sinh
         viewStudentScreen viewScreen = new viewStudentScreen();
-        viewScreen.setBackground(new Color(150, 205, 205));
+        viewScreen.setBackground(new Color(210, 214, 223));
         viewScreen.setVisible(true);
         content.add("viewscreen", viewScreen);
         // màn hình import
         ImportStudentScreen importScreen = new ImportStudentScreen();
-        importScreen.setBackground(new Color(150, 205, 205));
+        importScreen.setBackground(new Color(210, 214, 223));
         importScreen.setVisible(true);
         content.add("importscreen", importScreen);
         // màn hình export
         ExportStudentScreen exportScreen = new ExportStudentScreen();
-        exportScreen.setBackground(new Color(150, 205, 205));
+        exportScreen.setBackground(new Color(210, 214, 223));
         exportScreen.setVisible(true);
         content.add("exportscreen", exportScreen);
         // màn hình delete
         DeleteStudentScreen deleteScreen = new DeleteStudentScreen();
-        deleteScreen.setBackground(new Color(150, 205, 205));
+        deleteScreen.setBackground(new Color(210, 214, 223));
         deleteScreen.setVisible(true);
         content.add("deletescreen", deleteScreen);
         // xử lý giao diện khi nhấn nút add
@@ -420,7 +441,7 @@ public class ListStudent extends JFrame {
         public String avataPath;
 
         public addStudentScreen() {
-            Dimension dialog = new Dimension(750, 300);
+            Dimension dialog = new Dimension(600, 300);
             Dimension btnDimension = new Dimension(60, 20);
             JPanel temp = new JPanel();
             temp.setPreferredSize(dialog);
@@ -428,25 +449,31 @@ public class ListStudent extends JFrame {
             temp.setMaximumSize(dialog);
             JLabel labId = new JLabel("Id:          ");
             labId.setFont(new Font("Arial", Font.PLAIN, 20));
+            labId.setForeground(Color.white);
             JLabel labName = new JLabel("Name:          ");
             labName.setFont(new Font("Arial", Font.PLAIN, 20));
             JLabel labMark = new JLabel("Mark:          ");
+            labName.setForeground(Color.WHITE);
             labMark.setFont(new Font("Arial", Font.PLAIN, 20));
+            labMark.setForeground(Color.WHITE);
             JLabel labAddr = new JLabel("Address:           ");
             labAddr.setFont(new Font("Arial", Font.PLAIN, 20));
+            labAddr.setForeground(Color.white);
             JLabel labNote = new JLabel("Note:          ");
             labNote.setFont(new Font("Arial", Font.PLAIN, 20));
+            labNote.setForeground(Color.WHITE);
             JLabel labAvatar = new JLabel("Avatar:          ");
             labAvatar.setFont(new Font("Arial", Font.PLAIN, 20));
-            JTextField fieldId = new JTextField(40);
-            JTextField fieldName = new JTextField(40);
+            labAvatar.setForeground(Color.WHITE);
+            JTextField fieldId = new JTextField(30);
+            JTextField fieldName = new JTextField(30);
             JButton fieldAva = new JButton("Choose avatar");
             JFileChooser chooseFile = new JFileChooser();
             avataPath = "";
 
-            JTextField fieldAddr = new JTextField(40);
-            JTextField fieldNote = new JTextField(40);
-            JTextField fieldMark = new JTextField(40);
+            JTextField fieldAddr = new JTextField(30);
+            JTextField fieldNote = new JTextField(30);
+            JTextField fieldMark = new JTextField(30);
             JButton btnOk = new JButton("Add");
             btnOk.setFont(new Font("Arial", Font.PLAIN, 15));
             JButton btnCancel = new JButton("Cancel");
@@ -458,7 +485,7 @@ public class ListStudent extends JFrame {
             temp.setLayout(layout);
             temp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             temp.setBorder(BorderFactory.createLineBorder(Color.black));
-            temp.setBackground(new Color(32, 178, 170));
+            temp.setBackground(new Color(82, 97, 107));
             constraint.gridx = 0;
             constraint.gridy = 0;
             constraint.fill = GridBagConstraints.BOTH;
@@ -509,6 +536,7 @@ public class ListStudent extends JFrame {
                     fieldName.setText("");
                     student a = new student(id, name, avatar, addr, note, mark);
                     AddStudent(a);
+                    UpdateToBinaryFile();
                     JOptionPane.showMessageDialog(addStudentScreen.this, "Add Success!!!");
                 }
             });
@@ -593,26 +621,35 @@ public class ListStudent extends JFrame {
         public viewStudentScreen() {
             data = new Object[list.size()][6];
             for (int i = 0; i < list.size(); ++i) {
-                if (list.get(i).getAvatar().lastIndexOf("\\") == -1)
-                    data[i][0] = new ImageIcon(getClass().getResource("/media/" + list.get(i).getAvatar()));
-                else
-                    data[i][0] = new ImageIcon(list.get(i).getAvatar());
+                if (list.get(i).getAvatar().lastIndexOf("\\") == -1) {
+                    ImageIcon original = new ImageIcon(getClass().getResource("/media/" + list.get(i).getAvatar()));
+                    Image origin = original.getImage();
+                    Image resize = origin.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                    data[i][0] = new ImageIcon(resize);
+                } else {
+                    ImageIcon original = new ImageIcon(list.get(i).getAvatar());
+                    Image origin = original.getImage();
+                    Image resize = origin.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                    data[i][0] = new ImageIcon(resize);
+                }
                 data[i][1] = list.get(i).getId().toString();
                 data[i][2] = list.get(i).getName().toString();
                 data[i][3] = list.get(i).getAddress().toString();
                 data[i][4] = list.get(i).getMark().toString();
                 data[i][5] = list.get(i).getNote().toString();
             }
+
             myTableModel = new MyTableModel(data);
             jTable = new JTable(myTableModel);
-            jTable.setBackground(new Color(32, 178, 170));
+            jTable.setBackground(new Color(210, 214, 223));
             jTable.setRowHeight(50);
             jTable.setAutoCreateRowSorter(true);
-            jTable.setPreferredScrollableViewportSize(new Dimension(700, 600));
-            jTable.getColumnModel().getColumn(2).setPreferredWidth(250);
+            jTable.setPreferredScrollableViewportSize(new Dimension(800, 600));
+            jTable.getColumnModel().getColumn(2).setPreferredWidth(200);
             jTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-            jTable.getColumnModel().getColumn(3).setPreferredWidth(170);
+            jTable.getColumnModel().getColumn(3).setPreferredWidth(160);
             jTable.getColumnModel().getColumn(5).setPreferredWidth(250);
+            jTable.getColumnModel().getColumn(0).setPreferredWidth(45);
 
             jTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
                 @Override
@@ -634,10 +671,18 @@ public class ListStudent extends JFrame {
         public void updateInView() {
             Object[][] data = new Object[list.size()][6];
             for (int i = 0; i < list.size(); ++i) {
-                if (list.get(i).getAvatar().lastIndexOf("\\") == -1)
-                    data[i][0] = new ImageIcon(getClass().getResource("/media/" + list.get(i).getAvatar()));
-                else
-                    data[i][0] = new ImageIcon(list.get(i).getAvatar());
+                if (list.get(i).getAvatar().lastIndexOf("\\") == -1) {
+                    ImageIcon original = new ImageIcon(getClass().getResource("/media/" + list.get(i).getAvatar()));
+                    Image origin = original.getImage();
+                    Image resize = origin.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                    data[i][0] = new ImageIcon(resize);
+                } else {
+                    ImageIcon original = new ImageIcon(list.get(i).getAvatar());
+                    Image origin = original.getImage();
+                    Image resize = origin.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                    data[i][0] = new ImageIcon(resize);
+
+                }
                 data[i][1] = list.get(i).getId().toString();
                 data[i][2] = list.get(i).getName().toString();
                 data[i][3] = list.get(i).getAddress().toString();
@@ -654,7 +699,7 @@ public class ListStudent extends JFrame {
 
         public UpdateStudentScreen() {
 
-            Dimension dialog = new Dimension(750, 300);
+            Dimension dialog = new Dimension(500, 250);
             JPanel temp = new JPanel();
             temp.setPreferredSize(dialog);
             temp.setMinimumSize(dialog);
@@ -663,12 +708,15 @@ public class ListStudent extends JFrame {
             // OBJECT
             JLabel labId = new JLabel("ID: ");
             labId.setFont(new Font("Arial", Font.PLAIN, 20));
+            labId.setForeground(Color.WHITE);
             JLabel labCri = new JLabel("Criteria:");
             labCri.setFont(new Font("Arial", Font.PLAIN, 20));
+            labCri.setForeground(Color.WHITE);
             JLabel labVal = new JLabel("New value:");
             labVal.setFont(new Font("Arial", Font.PLAIN, 20));
-            JTextField textid = new JTextField(40);
-            JTextField textVal = new JTextField(40);
+            labVal.setForeground(Color.WHITE);
+            JTextField textid = new JTextField(30);
+            JTextField textVal = new JTextField(30);
             String options[] = { "ID", "Name", "Address", "Note", "Mark", "Avatar" };
             JButton btnOk = new JButton("Update");
             btnOk.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -689,7 +737,7 @@ public class ListStudent extends JFrame {
             temp.setLayout(layout);
             temp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            temp.setBackground(new Color(32, 178, 170));
+            temp.setBackground(new Color(82, 97, 107));
             constraint.gridx = 0;
             constraint.gridy = 0;
             constraint.fill = GridBagConstraints.BOTH;
@@ -717,6 +765,7 @@ public class ListStudent extends JFrame {
                     String value = textVal.getText();
                     String criteria = combo.getSelectedItem().toString();
                     String result = UpdateStudent(id, criteria, value);
+                    UpdateToBinaryFile();
                     textVal.setText("");
                     textid.setText("");
                     combo.setSelectedItem(1);
@@ -744,6 +793,7 @@ public class ListStudent extends JFrame {
 
         public void updateInImport(String pathfile) {
             String result = ReadFromFile(pathfile);
+            UpdateToBinaryFile();
             JOptionPane.showMessageDialog(ImportStudentScreen.this, result);
         }
     }
@@ -759,6 +809,7 @@ public class ListStudent extends JFrame {
                 File file = new File("export.csv");
                 // thực hiện ghi dữ liệu export vào file vừa tạo
                 WriteToFile(dir + "\\export.csv");
+
                 System.out.println(dir + "\\export.csv");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -780,6 +831,7 @@ public class ListStudent extends JFrame {
             temp.setMaximumSize(dimension);
             labChoose = new JLabel("Choose ID: ");
             labChoose.setFont(new Font("Arial", Font.PLAIN, 20));
+            labChoose.setForeground(Color.WHITE);
             btnOK = new JButton("CONFIRM");
             btnOK.setFont(new Font("Arial", Font.PLAIN, 15));
             btnCancel = new JButton("CANCEL");
@@ -803,7 +855,7 @@ public class ListStudent extends JFrame {
             temp.setLayout(layout);
             temp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             temp.setBorder(BorderFactory.createLineBorder(Color.black));
-            temp.setBackground(new Color(32, 178, 170));
+            temp.setBackground(new Color(82, 97, 107));
             constraint.gridx = 0;
             constraint.gridy = 0;
             constraint.fill = GridBagConstraints.BOTH;
@@ -823,6 +875,7 @@ public class ListStudent extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     String id = combo.getSelectedItem().toString();
                     DeleteStudent(id);
+                    UpdateToBinaryFile();
                     combo.removeItem(id);
                     combo.setSelectedItem(null);
                     JOptionPane.showMessageDialog(DeleteStudentScreen.this,
